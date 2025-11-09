@@ -40,17 +40,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         System.out.println(path);
 
-        boolean isExcludedPath = path.startsWith("/api/v1/auth/") ||
-                path.startsWith("/api/v1/public/") ||
-                path.startsWith("/ws") ||
-                path.startsWith("/actuator/") ||
-                path.startsWith("/system/") ||
-                path.startsWith("/swagger-ui.html") ||
-                path.startsWith("/swagger-ui/") ||
-                path.startsWith("/v3/api-docs/") ||
-                path.startsWith("/v3/api-docs");
+        boolean isExcludedPath = path.startsWith("/auth/") ||
+                path.startsWith("/public/") ||
+                path.startsWith("/actuator");
 
-        if (isExcludedPath && !path.equals("/auth/check-user")) {
+        if (isExcludedPath) {
             filterChain.doFilter(request, response);
             return;
         }
