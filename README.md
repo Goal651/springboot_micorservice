@@ -318,6 +318,7 @@ spring.kafka.producer.properties.spring.json.add.type.headers=false
 ```
 
 **Consumer (notificationService):**
+
 ```properties
 spring.kafka.bootstrap-servers=kafka:29092
 spring.kafka.consumer.group-id=notification-service-group
@@ -328,6 +329,7 @@ spring.kafka.consumer.properties.spring.json.use.type.headers=false
 ```
 
 **Key Points:**
+
 - Use `kafka:29092` inside Docker containers
 - Use `localhost:9092` from host machine
 - Disable type headers to avoid class mismatch issues
@@ -357,7 +359,7 @@ This template demonstrates asynchronous, event-driven communication between micr
 
 ### Event Flow Example
 
-```
+```mermaid
 Client → POST /users/1 → userService
                             ↓
                     Save to PostgreSQL
@@ -383,6 +385,7 @@ Client → POST /users/1 → userService
 ### Event Types
 
 Currently supported events in `user-events` topic:
+
 - `USER_CREATED` - When a new user is created
 - `USER_UPDATED` - When user information is updated
 - `USER_DELETED` - When a user is deleted
@@ -565,6 +568,7 @@ docker-compose down
 
 1. Ensure both producer and consumer have matching DTO classes
 2. Disable type headers in configuration:
+
    ```properties
    # Producer
    spring.kafka.producer.properties.spring.json.add.type.headers=false
@@ -572,7 +576,9 @@ docker-compose down
    # Consumer
    spring.kafka.consumer.properties.spring.json.use.type.headers=false
    ```
+
 3. Clear Kafka topics and restart:
+
    ```bash
    docker-compose down
    docker volume prune -f
@@ -589,7 +595,7 @@ docker-compose down
 2. Verify topic exists: `docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092`
 3. Check consumer group: `docker-compose logs -f notification-service`
 4. Ensure correct bootstrap server:
-   - Inside Docker: `kafka:29092`
+   - Inside Docker: `kafka:990092`
    - Outside Docker: `localhost:9092`
 
 ## 📚 API Documentation
