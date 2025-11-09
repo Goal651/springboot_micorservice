@@ -11,15 +11,17 @@ import org.springframework.context.annotation.Bean;
 @EnableDiscoveryClient
 public class GatewayApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(GatewayApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(GatewayApplication.class, args);
+    }
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("user-service", r -> r.path("/users/**")
-                .uri("lb://user-service"))
-            .build();
+                .route("user-service", r -> r.path("/users/**")
+                        .uri("lb://user-service"))
+                .route("auth-service", r -> r.path("/auth**")
+                        .uri("lb://auth-service"))
+                .build();
     }
 }

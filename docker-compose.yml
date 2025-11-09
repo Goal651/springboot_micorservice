@@ -24,6 +24,19 @@ services:
     networks:
       - micro-net
 
+  auth-service:
+    build: ./authService
+    container_name: auth-service
+    restart: always
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka
+      - db
+      - kafka
+    networks:
+      - micro-net
+
   eureka:
     build: ./eureka
     container_name: eureka
