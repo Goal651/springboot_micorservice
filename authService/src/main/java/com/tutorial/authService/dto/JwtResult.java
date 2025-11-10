@@ -9,6 +9,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JwtResult {
     private boolean valid;
-    private String id;
+    private String email;
     private String error;
 }

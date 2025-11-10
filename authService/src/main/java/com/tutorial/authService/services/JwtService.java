@@ -33,7 +33,7 @@ public class JwtService  {
 
     public String getUsernameFromToken(String token) throws AccessDeniedException  {
         JwtResult result = validateToken(token);
-        return result.isValid() ? result.getId() : null;
+        return result.isValid() ? result.getEmail() : null;
     }
 
     public boolean isTokenValid(String token, String username) throws AccessDeniedException  {

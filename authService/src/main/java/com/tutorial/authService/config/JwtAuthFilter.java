@@ -60,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new AccessDeniedException("Verification failed.");
         }
 
-        String username = result.getId();
+        String username = result.getEmail();
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
