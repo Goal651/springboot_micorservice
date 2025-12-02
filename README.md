@@ -341,9 +341,10 @@ spring.kafka.consumer.properties.spring.json.use.type.headers=false
 | API Gateway          | 8080           | 8080      |
 | User Service         | 8081           | 8081      |
 | Notification Service | 8082           | 8082      |
+| Auth Service         | 8083           | 8083      |
 | Eureka Server        | 8761           | 8761      |
 | Config Server        | 8888           | 8888      |
-| Kafka                | 29092          | 9092      |
+| Kafka                | 9092           | 19092     |
 | Zookeeper            | 2181           | 2181      |
 | PostgreSQL           | 5432           | 2500      |
 
@@ -657,19 +658,59 @@ curl http://localhost:8080/users/1
      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
    ```
 
-2. **Resource Limits:** Set memory and CPU limits
+2. **Resource Limits:** All services have optimized memory and CPU limits
 
    ```yaml
-   deploy:
-     resources:
-       limits:
-         cpus: '1'
-         memory: 512M
+   # Example: User Service
+   user-service:
+     mem_limit: 600m
+     cpus: "1.0"
+     environment:
+       - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms256m -Xmx384m
    ```
 
-3. **Logging:** Configure centralized logging (ELK stack, Splunk)
+   **Total Resource Requirements:**
+   - **Memory**: 5.6 GB
+   - **CPU**: 9.7 cores
 
-4. **Security:**
+   | Service | Memory | CPU | Heap Max |
+   |---------|--------|-----|-----------|
+   | notification-service | 400m | 0.8 | 256m |
+   | user-service | 600m | 1.0 | 384m |
+   | auth-service | 600m | 1.0 | 384m |
+   | eureka | 700m | 1.2 | 512m |
+   | config-server | 300m | 0.6 | 200m |
+   | gateway | 600m | 1.0 | 384m |
+   | PostgreSQL | 800m | 1.5 | N/A |
+   | Zookeeper | 500m | 0.6 | N/A |
+   | Kafka | 1.2g | 2.0 | N/A |
+
+3. **Data Persistence:** All stateful services use Docker volumes
+
+   ```yaml
+   volumes:
+     postgres-data:    # PostgreSQL database
+     kafka-data:       # Kafka messages and topics
+     zookeeper-data:   # Zookeeper metadata
+     zookeeper-logs:   # Zookeeper transaction logs
+   ```
+
+   **Volume Management:**
+   ```bash
+   # List volumes
+   docker volume ls
+
+   # Backup PostgreSQL data
+   docker run --rm -v springboot_microservice_postgres-data:/data \
+     -v $(pwd):/backup ubuntu tar czf /backup/postgres-backup.tar.gz /data
+
+   # Remove all volumes (WARNING: deletes all data!)
+   docker-compose down -v
+   ```
+
+4. **Logging:** Configure centralized logging (ELK stack, Splunk)
+
+5. **Security:****
    - Enable Spring Security
    - Use HTTPS
    - Implement OAuth2/JWT authentication
