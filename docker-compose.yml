@@ -10,6 +10,10 @@ services:
       - kafka
     networks:
       - micro-net
+    mem_limit: 400m
+    cpus: "0.8"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms128m -Xmx256m
 
   user-service:
     build: ./userService
@@ -23,6 +27,10 @@ services:
       - kafka
     networks:
       - micro-net
+    mem_limit: 600m
+    cpus: "1.0"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms256m -Xmx384m
 
   auth-service:
     build: ./authService
@@ -36,6 +44,10 @@ services:
       - kafka
     networks:
       - micro-net
+    mem_limit: 600m
+    cpus: "1.0"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms256m -Xmx384m
 
   eureka:
     build: ./eureka
@@ -45,6 +57,10 @@ services:
       - "8761:8761"
     networks:
       - micro-net
+    mem_limit: 700m
+    cpus: "1.2"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms256m -Xmx512m
 
   config-server:
     build: ./configServer
@@ -56,6 +72,10 @@ services:
       - eureka
     networks:
       - micro-net
+    mem_limit: 300m
+    cpus: "0.6"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms128m -Xmx200m
 
   gateway:
     build: ./gateway
@@ -68,6 +88,10 @@ services:
       - config-server
     networks:
       - micro-net
+    mem_limit: 600m
+    cpus: "1.0"
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -Xms256m -Xmx384m
 
   db:
     image: postgres:15
@@ -75,6 +99,8 @@ services:
     restart: always
     ports:
       - "2500:5432"
+    mem_limit: 800m
+    cpus: "1.5"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -88,6 +114,8 @@ services:
     restart: always
     ports:
       - "2181:2181"
+    mem_limit: 500m
+    cpus: "0.6"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -99,13 +127,15 @@ services:
     container_name: kafka
     restart: always
     ports:
-      - "9092:9092"
+      - "19092:9092"
     depends_on:
       - zookeeper
+    mem_limit: 1.2g
+    cpus: "2.0"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:19092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
